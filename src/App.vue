@@ -89,8 +89,16 @@ const searchInputValue = ref<string>('');
 const elementsOnPage = ref<number>(3);
 const currentPage = ref<number>(1);
 
+const filterArr = computed(() => {
+  if (!searchInputValue.value) return tableDataArr.value;
+  const query = searchInputValue.value.toLowerCase().trim();
+  return tableDataArr.value.filter(item =>
+    item.fio.toLowerCase().includes(query)
+  );
+});
+
 const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(tableDataArr.value.length / Math.max(1, elementsOnPage.value)));
+  return Math.max(1, Math.ceil(filterArr.value.length / Math.max(1, elementsOnPage.value)));
 });
 
 const isFirstPage = computed(() => currentPage.value <= 1);
@@ -101,10 +109,10 @@ const arrByPage = computed(() => {
   const page = Math.max(1, currentPage.value);
   const first = (page - 1) * perPage;
   const last = page * perPage;
-  return tableDataArr.value.slice(first, last);
+  return filterArr.value.slice(first, last);
 });
 
-watch([tableDataArr, elementsOnPage], () => {
+watch([filterArr, elementsOnPage], () => {
   if (currentPage.value > totalPages.value) currentPage.value = totalPages.value;
   if (currentPage.value < 1) currentPage.value = 1;
 }, { immediate: true });
@@ -122,7 +130,7 @@ const backPage = () => {
   <div class="app">
     <div class="app__search">
       <DefaultIInput
-        :value="searchInputValue"
+        v-model:value="searchInputValue"
         placeholder="Найти по ФИО..."
       />
     </div>
