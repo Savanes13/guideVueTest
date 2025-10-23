@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import HeaderTable from './components/element/HeaderTable.vue';
 
 import TableItem from './components/element/TableItem.vue';
@@ -85,48 +85,42 @@ const tableDataArr = ref([
 ]);
 
 const elementsOnPage = ref<number>(3);
-const startPage = ref<number>(1);
+const currentPage = ref<number>(1);
 
-const nowPage = computed(() => {
-  const arrLength = tableDataArr.value.length;
-  const maxPage = Math.ceil(arrLength / elementsOnPage.value);
-  if((elementsOnPage.value * startPage.value) > arrLength + elementsOnPage.value) return maxPage;
-  if(startPage.value < 1) return 1;
-  return startPage.value;
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(tableDataArr.value.length / Math.max(1, elementsOnPage.value)));
 });
 
-//сделать массив выбранной страницы
+const isFirstPage = computed(() => currentPage.value <= 1);
+const isLastPage = computed(() => currentPage.value >= totalPages.value);
+
 const arrByPage = computed(() => {
-  const lastItem = elementsOnPage.value * nowPage.value;
-  const firstItem = elementsOnPage.value * nowPage.value - elementsOnPage.value;
-  const arr = tableDataArr.value.slice(firstItem, lastItem)
-  return arr
+  const perPage = Math.max(1, elementsOnPage.value);
+  const page = Math.max(1, currentPage.value);
+  const first = (page - 1) * perPage;
+  const last = page * perPage;
+  return tableDataArr.value.slice(first, last);
 });
+
+watch([tableDataArr, elementsOnPage], () => {
+  if (currentPage.value > totalPages.value) currentPage.value = totalPages.value;
+  if (currentPage.value < 1) currentPage.value = 1;
+}, { immediate: true });
 
 const nextPage = () => {
-  const arrLength = tableDataArr.value.length;
-  if((elementsOnPage.value * startPage.value + 1) >= arrLength + elementsOnPage.value) return;
-  startPage.value ++;
+  if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
 const backPage = () => {
-  if(startPage.value <= 1) return;
-  startPage.value --;
+  if (currentPage.value > 1) currentPage.value--;
 };
 </script>
 
 <template>
   <div>
-    {{ nowPage }}
-
-    {{ arrByPage }}
-
-    {{ startPage }}
-
     <HeaderTable/>
-
     <TableItem
-      v-for="item in tableDataArr"
+      v-for="item in arrByPage"
       :key="item.id"
       :id="item.id"
       :name="item.name"
@@ -134,6 +128,15 @@ const backPage = () => {
       :number="item.number"
       :address="item.address"
     />
+
+    <div>
+      <div>
+        <p>блоков на странице {{ elementsOnPage }}</p>
+      </div>
+      <div>
+        <p>Страница {{ currentPage }}</p>
+      </div>
+    </div>
 
     <div>
       <button @click="backPage">назад</button>
