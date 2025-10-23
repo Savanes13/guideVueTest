@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import HeaderTable from './components/element/HeaderTable.vue';
-
+import DefaultButton from './components/ui/button/DefaultButton.vue';
 import TableItem from './components/element/TableItem.vue';
 
 const tableDataArr = ref([
@@ -117,34 +117,82 @@ const backPage = () => {
 </script>
 
 <template>
-  <div>
-    <HeaderTable/>
-    <TableItem
-      v-for="item in arrByPage"
-      :key="item.id"
-      :id="item.id"
-      :name="item.name"
-      :fio="item.fio"
-      :number="item.number"
-      :address="item.address"
-    />
+  <div class="app">
+    <div class="app__table">
+      <HeaderTable/>
+      <TableItem
+        v-for="item in arrByPage"
+        :key="item.id"
+        :id="item.id"
+        :name="item.name"
+        :fio="item.fio"
+        :number="item.number"
+        :address="item.address"
+      />
+    </div>
 
-    <div>
-      <div>
-        <p>блоков на странице {{ elementsOnPage }}</p>
+
+    <div class="app__managed-table">
+      <div class="button-block">
+        <DefaultButton
+          class="button-block__button"
+          @click="backPage"
+          :disabled="isFirstPage"
+        >
+          назад
+        </DefaultButton>
+        <DefaultButton
+          class="button-block__button"
+          @click="nextPage"
+          :disabled="isLastPage"
+        >
+          вперед
+        </DefaultButton>
       </div>
-      <div>
-        <p>Страница {{ currentPage }}</p>
+      <div class="info-block">
+        <div class="info-block">
+          <p>Блоков на странице {{ elementsOnPage }}</p>
+        </div>
+        <div class="info-block">
+          <p>Страница {{ currentPage }}</p>
+        </div>
       </div>
     </div>
 
-    <div>
-      <button @click="backPage">назад</button>
-      <button @click="nextPage">вперед</button>
-    </div>
   </div>
 </template>
 
 <style scoped>
+.app {
+  
+}
 
+.app__table {
+  height: 280px;
+}
+
+.app__managed-table {
+  margin-top: 20px;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.info-block {
+  display: flex;
+  gap: 10px;
+  font-size: 20px;
+}
+
+.button-block {
+  display: flex;
+  gap: 10px;
+}
+
+.button-block__button {
+  width: 200px;
+  height: 50px;
+  border-radius: 4px;
+}
 </style>
