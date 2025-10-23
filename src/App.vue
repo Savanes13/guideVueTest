@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import HeaderTable from './components/element/HeaderTable.vue';
 import DefaultButton from './components/ui/button/DefaultButton.vue';
 import TableItem from './components/element/TableItem.vue';
+import DefaultIInput from './components/ui/input/DefaultIInput.vue';
 
 const tableDataArr = ref([
   {
@@ -84,6 +85,7 @@ const tableDataArr = ref([
   }
 ]);
 
+const searchInputValue = ref<string>('');
 const elementsOnPage = ref<number>(3);
 const currentPage = ref<number>(1);
 
@@ -118,6 +120,13 @@ const backPage = () => {
 
 <template>
   <div class="app">
+    <div class="app__search">
+      <DefaultIInput
+        :value="searchInputValue"
+        placeholder="Найти по ФИО..."
+      />
+    </div>
+
     <div class="app__table">
       <HeaderTable/>
       <TableItem
@@ -130,7 +139,6 @@ const backPage = () => {
         :address="item.address"
       />
     </div>
-
 
     <div class="app__managed-table">
       <div class="button-block">
@@ -151,10 +159,10 @@ const backPage = () => {
       </div>
       <div class="info-block">
         <div class="info-block">
-          <p>Блоков на странице {{ elementsOnPage }}</p>
+          <p>Блоков на странице: {{ elementsOnPage }}</p>
         </div>
         <div class="info-block">
-          <p>Страница {{ currentPage }}</p>
+          <p>Страница: {{ currentPage }}</p>
         </div>
       </div>
     </div>
@@ -165,6 +173,11 @@ const backPage = () => {
 <style scoped>
 .app {
   
+}
+
+.app__search {
+  width: 700px;
+  margin: 20px;
 }
 
 .app__table {
