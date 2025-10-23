@@ -124,6 +124,14 @@ const nextPage = () => {
 const backPage = () => {
   if (currentPage.value > 1) currentPage.value--;
 };
+
+
+
+//изменение поля
+const changeField = (value: string, fieldName: string, id: number) => {
+  const tableItem = tableDataArr.value.find(item => item.id === id);
+  if (tableItem) (tableItem as any)[fieldName] = value;
+};
 </script>
 
 <template>
@@ -145,6 +153,8 @@ const backPage = () => {
         :fio="item.fio"
         :number="item.number"
         :address="item.address"
+
+        @update:value="changeField"
       />
     </div>
 
