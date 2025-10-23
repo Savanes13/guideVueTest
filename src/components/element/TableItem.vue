@@ -19,10 +19,15 @@ const {
 
 const emit = defineEmits<{
   (e: 'update:value', value: string, fieldName: string, id: number): void;
+  (e: 'delete', id: number): void;
 }>();
 
 const updateLineValue = (value: string, fieldName: string) => {
   emit('update:value', value, fieldName, id);
+};
+
+const deleteTableItem = () => {
+  emit('delete', id)
 };
 </script>
 
@@ -56,8 +61,11 @@ const updateLineValue = (value: string, fieldName: string) => {
         @update:value="(value) => updateLineValue(value, 'address')"
       />
     </div>
-    <div class="table-item__item table-item__item--empty">
-      
+    <div 
+      class="table-item__item table-item__item--empty"
+      @click="deleteTableItem"
+    >
+      x
     </div>
   </div>
 </template>
@@ -84,5 +92,13 @@ const updateLineValue = (value: string, fieldName: string) => {
 
 .table-item__item--empty {
   flex-basis: 5%;
+}
+
+.table-item__item--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  cursor: pointer;
 }
 </style>

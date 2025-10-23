@@ -12,48 +12,58 @@ interface ILineItemProps {
   isAddress?: boolean
 }
 
-const {
-  value,
-  isAddress = false
-} = defineProps<ILineItemProps>();
+const { value, isAddress = false } = defineProps<ILineItemProps>();
 
-const isAddressValue = (value: string | IAddress): value is IAddress => {
-  return typeof value !== 'string'
+const isAddressValue = (val: string | IAddress): val is IAddress => {
+  return typeof val !== 'string'
 }
 
-const inputValue = ref<string>(isAddressValue(value) ? `${value.city}, ${value.street}, ${value.house}` : value);
+const isEditing = ref<boolean>(false);
+const inputValue = ref<string>(
+  isAddressValue(value) ? `${value.city}, ${value.street}, ${value.house}` : (value as string)
+);
 
 const emit = defineEmits<{
   (e: 'update:value', value: string): void;
-}>();
+}>()
 
 watch(inputValue, () => {
   updateValue();
-})
+});
 
 const updateValue = () => {
-  emit('update:value', inputValue.value);
+  emit('update:value', inputValue.value)
+}
+
+const startEditing = () => {
+  isEditing.value = true;
+};
+
+const stopEditing = () => {
+  isEditing.value = false;
 };
 </script>
 
 <template>
   <div class="line-item">
     <div>
-      <div v-if="!isAddress">
-        <p>{{ value }}</p>
+      <div 
+        v-if="!isEditing" 
+        @click="startEditing" 
+        style="cursor: text;"
+      >
+        <p v-if="!isAddress">{{ value }}</p>
+        <p v-else-if="isAddressValue(value)">{{ value.city }}, {{ value.street }}, {{ value.house }}</p>
       </div>
       <div v-else>
-        <p v-if="isAddressValue(value)">{{ value.city }}, {{ value.street }}, {{ value.house }}</p>
+        <input 
+          type="text" 
+          v-model="inputValue" 
+          @blur="stopEditing"
+          autofocus
+        />
       </div>
     </div>
-
-    <div>
-      <input 
-        type="text"
-        v-model="inputValue"
-      >
-    </div>
-
   </div>
 </template>
 

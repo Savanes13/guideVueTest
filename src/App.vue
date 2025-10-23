@@ -125,12 +125,13 @@ const backPage = () => {
   if (currentPage.value > 1) currentPage.value--;
 };
 
-
-
-//изменение поля
 const changeField = (value: string, fieldName: string, id: number) => {
   const tableItem = tableDataArr.value.find(item => item.id === id);
   if (tableItem) (tableItem as any)[fieldName] = value;
+};
+
+const deteleArrItem = (id: number) => {
+  tableDataArr.value = tableDataArr.value.filter(item => item.id !== id);
 };
 </script>
 
@@ -153,8 +154,8 @@ const changeField = (value: string, fieldName: string, id: number) => {
         :fio="item.fio"
         :number="item.number"
         :address="item.address"
-
         @update:value="changeField"
+        @delete="deteleArrItem"
       />
     </div>
 
